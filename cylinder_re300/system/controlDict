@@ -1,0 +1,40 @@
+FoamFile { version 2.0; format ascii; class dictionary; object controlDict; }
+
+libs (libnnTurbulenceModels);
+
+application     simpleFoam;
+startFrom       startTime;
+startTime       0;
+stopAt          endTime;
+endTime         100;
+deltaT          1;
+writeControl    timeStep;
+writeInterval   100;
+purgeWrite      1;
+writeFormat     ascii;
+writePrecision  8;
+writeCompression off;
+timeFormat      general;
+timePrecision   6;
+runTimeModifiable true;
+
+functions
+{
+    forceCoeffs1
+    {
+        type            forceCoeffs;
+        libs            (forces);
+        writeControl    timeStep;
+        writeInterval   1;
+        patches         (cylinder);
+        rho             rhoInf;
+        rhoInf          1;
+        liftDir         (0 1 0);
+        dragDir         (1 0 0);
+        CofR            (0 0 0);
+        pitchAxis       (0 0 1);
+        magUInf         1;
+        lRef            1;
+        Aref            0.1;
+    }
+}

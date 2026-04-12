@@ -1,0 +1,8 @@
+#!/bin/bash
+cd "${0%/*}" || exit
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions
+
+cp -r 0.orig 0
+runApplication blockMesh
+runApplication snappyHexMesh -overwrite
+runApplication simpleFoam

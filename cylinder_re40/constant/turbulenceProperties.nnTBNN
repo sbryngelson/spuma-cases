@@ -1,0 +1,16 @@
+FoamFile { version 2.0; format ascii; class dictionary; object turbulenceProperties; }
+
+simulationType RAS;
+
+RAS
+{
+    RASModel    nnTBNN;
+    turbulence  on;
+    printCoeffs on;
+
+    nnTBNNCoeffs
+    {
+        weightsDir  "constant/nn_weights/tbnn_paper";
+        nutMax      1.0;
+    }
+}

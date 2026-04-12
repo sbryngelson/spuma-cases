@@ -1,0 +1,6 @@
+case,model,family,ms_per_iter,iters,walltime_s,total_gpu_ms,Cd,Cd_dns,Cd_err_pct,Cl,converged,note
+cylinder,fusedKOmegaSST,k-omega,2.284,1500,157,3426.5,1.4074,1.3500,4.25,3.500676e-03,0,
+cylinder,fusedKOmega,k-omega,2.188,1500,193,3281.4,7.3175,1.3500,442.04,7.864358e-03,0,
+cylinder,fusedMixingLength,MixLen,1.632,949,125,1548.6,1.6701,1.3500,23.71,2.928493e-03,0,
+cylinder,fusedEARSMwj,EARSM,2.366,1500,215,3549.1,1.3824,1.3500,2.40,3.641602e-03,0,
+cylinder,fusedEARSMhellsten,EARSM,2.335,1500,199,3502.5,1.3826,1.3500,2.42,4.772838e-03,0,

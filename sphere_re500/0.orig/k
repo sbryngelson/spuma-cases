@@ -1,0 +1,10 @@
+FoamFile { version 2.0; format ascii; class volScalarField; object k; }
+dimensions      [0 2 -2 0 0 0 0];
+internalField   uniform 0.00375;  // 0.5*(Ti*U)^2, Ti=5%
+boundaryField
+{
+    inlet  { type fixedValue; value uniform 0.00375; }
+    outlet { type zeroGradient; }
+    walls  { type slip; }
+    sphere { type kqRWallFunction; value uniform 0.00375; }
+}

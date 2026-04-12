@@ -1,0 +1,11 @@
+case,model,exit,total_ms,turb_ms,note
+cylinder,kOmegaSST,0,65.35,30.33,fused-baseline
+cylinder,nnMLP-small,0,109.6,82.6,fused
+cylinder,nnMLP-med,0,205.7,178.5,fused
+cylinder,nnMLP-large,0,1184.3,1145.3,fused
+cylinder,nnTBNN-small,0,127.3,95.2,fused
+cylinder,nnTBNN-med,0,291.8,263.3,fused
+cylinder,nnTBNN-large,0,733.2,701.9,fused
+cylinder,nnPITBNN-small,0,132.4,97.4,fused
+cylinder,nnPITBNN-med,0,274.4,242.3,fused
+cylinder,nnPITBNN-large,0,733.7,705.0,fused

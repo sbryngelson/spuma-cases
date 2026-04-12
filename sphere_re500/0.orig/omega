@@ -1,0 +1,10 @@
+FoamFile { version 2.0; format ascii; class volScalarField; object omega; }
+dimensions      [0 0 -1 0 0 0 0];
+internalField   uniform 75;  // omega = k/(nu*nutRatio), nutRatio=10
+boundaryField
+{
+    inlet  { type fixedValue; value uniform 75; }
+    outlet { type zeroGradient; }
+    walls  { type slip; }
+    sphere { type omegaWallFunction; value uniform 75; }
+}

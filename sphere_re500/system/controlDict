@@ -1,0 +1,37 @@
+FoamFile { version 2.0; format ascii; class dictionary; object controlDict; }
+application     simpleFoam;
+startFrom       startTime;
+startTime       0;
+stopAt          endTime;
+endTime         5000;
+deltaT          1;
+writeControl    timeStep;
+writeInterval   5000;
+purgeWrite      1;
+writeFormat     ascii;
+writePrecision  8;
+writeCompression off;
+timeFormat      general;
+timePrecision   6;
+runTimeModifiable true;
+
+functions
+{
+    forceCoeffs1
+    {
+        type            forceCoeffs;
+        libs            (forces);
+        writeControl    timeStep;
+        writeInterval   1;
+        patches         (sphere);
+        rho             rhoInf;
+        rhoInf          1;
+        liftDir         (0 1 0);
+        dragDir         (1 0 0);
+        CofR            (0 0 0);
+        pitchAxis       (0 0 1);
+        magUInf         1;
+        lRef            1;
+        Aref            0.19635;  // pi*r^2 = pi*0.25
+    }
+}

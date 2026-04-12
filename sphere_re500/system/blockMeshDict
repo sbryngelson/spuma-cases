@@ -1,0 +1,51 @@
+FoamFile { version 2.0; format ascii; class dictionary; object blockMeshDict; }
+
+// Background mesh for sphere Re=200
+// Domain: [-5, 15] x [-5, 5] x [-5, 5]
+// Sphere: center (0,0,0), radius 0.5
+
+scale 1;
+
+vertices
+(
+    (-5 -5 -5)
+    (15 -5 -5)
+    (15  5 -5)
+    (-5  5 -5)
+    (-5 -5  5)
+    (15 -5  5)
+    (15  5  5)
+    (-5  5  5)
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) (80 40 40) simpleGrading (1 1 1)
+);
+
+edges ();
+
+boundary
+(
+    inlet
+    {
+        type patch;
+        faces ((0 4 7 3));
+    }
+    outlet
+    {
+        type patch;
+        faces ((2 6 5 1));
+    }
+    walls
+    {
+        type patch;
+        faces
+        (
+            (3 7 6 2)
+            (1 5 4 0)
+            (0 3 2 1)
+            (4 5 6 7)
+        );
+    }
+);
