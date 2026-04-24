@@ -1,28 +1,21 @@
 #!/bin/bash
-#SBATCH -J gci_sphere_hires
+#SBATCH -J gci_sphere
 #SBATCH -A gts-sbryngelson3 --qos embers
 #SBATCH -N 1 --ntasks-per-node=1 --gres=gpu:H200:1
-#SBATCH -t 4:00:00
-#SBATCH --array=0-3
-#SBATCH -o /storage/scratch1/6/sbryngelson3/spuma_cases/convergence_runs/gci_sphere_hires_%A_%a.log
+#SBATCH -t 2:00:00
+#SBATCH -o /storage/scratch1/6/sbryngelson3/spuma_cases/convergence_runs/gci_sphere_%j.log
 
-# 2 closures x 2 Re = 4 array tasks.
-# Closures: fusedKOmegaSST (baseline), fusedEARSMhellsten (anisotropy reference).
+# One (Re, model) per job. Submit via:
+#   sbatch --export=ALL,RE_TAG=300,MODEL=fusedKOmegaSST,TURB="<props>" sbatch_gci_sphere_one.sh
+# No `set -u`: OpenFOAM's etc/bashrc touches unbound variables.
 
-set -euo pipefail
 source /storage/scratch1/6/sbryngelson3/spuma_cases/setup_spuma_env.sh
 
+: "${RE_TAG:?RE_TAG required (200 or 300)}"
+: "${MODEL:?MODEL required (fusedKOmegaSST, fusedEARSMhellsten)}"
+: "${TURB:?TURB required (turbulenceProperties body)}"
+
 BASE=/storage/scratch1/6/sbryngelson3/spuma_cases
-
-CONFIGS=(
-    "200|fusedKOmegaSST|simulationType RAS; RAS { RASModel fusedKOmegaSST; turbulence on; printCoeffs on; }"
-    "200|fusedEARSMhellsten|simulationType RAS; RAS { RASModel fusedEARSMhellsten; turbulence on; printCoeffs on; }"
-    "300|fusedKOmegaSST|simulationType RAS; RAS { RASModel fusedKOmegaSST; turbulence on; printCoeffs on; }"
-    "300|fusedEARSMhellsten|simulationType RAS; RAS { RASModel fusedEARSMhellsten; turbulence on; printCoeffs on; }"
-)
-
-IFS='|' read -r RE_TAG MODEL TURB <<< "${CONFIGS[$SLURM_ARRAY_TASK_ID]}"
-
 TEMPLATE=$BASE/sphere_re${RE_TAG}_hires_template
 DIR=$BASE/convergence_runs/sphere_re${RE_TAG}_hires__${MODEL}
 NITERS=3000
@@ -30,7 +23,7 @@ NITERS=3000
 echo "======================================="
 echo " GCI sphere_hires Re=${RE_TAG} model=${MODEL}"
 echo "======================================="
-
+date
 rm -rf "$DIR"
 cp -r "$TEMPLATE" "$DIR"
 rm -rf "$DIR"/constant/polyMesh "$DIR"/log* "$DIR"/[1-9]*
@@ -61,7 +54,6 @@ sed -i '/libs.*nnTurbulenceModels/d' "$DIR/system/controlDict"
 sed -i '/libs.*fvOptions/d' "$DIR/system/controlDict"
 echo 'libs (libnnTurbulenceModels libfvOptions);' >> "$DIR/system/controlDict"
 
-# Background mesh + sphere cut
 echo "--- blockMesh ($(date)) ---"
 blockMesh -case "$DIR" > "$DIR/log.blockMesh" 2>&1
 tail -3 "$DIR/log.blockMesh"
@@ -77,4 +69,3 @@ EXIT=$?
 ELAPSED=$((SECONDS - START))
 echo "simpleFoam exit=$EXIT, elapsed=${ELAPSED}s"
 grep "ExecutionTime" "$DIR/log" | tail -1
-echo "======================================="
