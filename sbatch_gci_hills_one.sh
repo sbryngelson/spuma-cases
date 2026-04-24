@@ -67,7 +67,7 @@ tail -5 "$DIR/log.blockMesh"
 
 echo "--- simpleFoam ($(date)) ---"
 START=$SECONDS
-simpleFoam -pool fixedSizeMemoryPool -poolSize 16 -case "$DIR" > "$DIR/log" 2>&1
+simpleFoam -pool fixedSizeMemoryPool -poolSize 48 -case "$DIR" > "$DIR/log" 2>&1
 EXIT=$?
 ELAPSED=$((SECONDS - START))
 echo "simpleFoam exit=$EXIT, elapsed=${ELAPSED}s"
