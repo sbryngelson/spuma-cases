@@ -2,7 +2,7 @@
 #SBATCH -J gci_hills
 #SBATCH -A gts-sbryngelson3 --qos embers
 #SBATCH -N 1 --ntasks-per-node=1 --gres=gpu:H200:1
-#SBATCH -t 5:00:00
+#SBATCH -t 4:00:00
 #SBATCH -o /storage/scratch1/6/sbryngelson3/spuma_cases/convergence_runs/gci_hills_%j.log
 
 # One (Re, model) per job. Submit via:
@@ -20,7 +20,7 @@ source /storage/scratch1/6/sbryngelson3/spuma_cases/setup_spuma_env.sh
 BASE=/storage/scratch1/6/sbryngelson3/spuma_cases
 TEMPLATE=$BASE/hills_re${RE_TAG}_hires_template
 DIR=$BASE/convergence_runs/hills_re${RE_TAG}_hires__${MODEL}
-NITERS=3000
+NITERS=1500   # match the baseline acc_h100_results methodology
 
 echo "======================================="
 echo " GCI hills_hires Re=${RE_TAG} model=${MODEL}"
@@ -32,8 +32,8 @@ rm -rf "$DIR"/constant/polyMesh "$DIR"/log* "$DIR"/[1-9]*
 
 [ -d "$DIR/constant/nn_weights" ] || cp -r "$BASE/cylinder_nn_template/constant/nn_weights" "$DIR/constant/nn_weights"
 
-for scheme in "div(phi,omega)" "div(phi,epsilon)" "div(phi,R)" "div(nonlinearStress)"; do
-    grep -q "$scheme" "$DIR/system/fvSchemes" || \
+for scheme in "div(phi,omega)" "div(phi,epsilon)" "div(phi,R)" "div(R)" "div(nonlinearStress)"; do
+    grep -q -F "$scheme " "$DIR/system/fvSchemes" || \
         sed -i "/div(phi,k)/a\\    $scheme  Gauss linear;" "$DIR/system/fvSchemes"
 done
 grep -q "wallDist" "$DIR/system/fvSchemes" || echo 'wallDist { method meshWave; }' >> "$DIR/system/fvSchemes"
@@ -55,8 +55,8 @@ SIMPLE { nNonOrthogonalCorrectors 0; consistent yes; pRefCell 0; pRefValue 0; }
 relaxationFactors { equations { U 0.7; k 0.7; omega 0.7; epsilon 0.7; } fields { p 0.3; } }
 EOF2
 
-sed -i "s/endTime .*/endTime         $NITERS;/" "$DIR/system/controlDict"
-sed -i "s/writeInterval .*/writeInterval   $NITERS;/" "$DIR/system/controlDict"
+sed -i "s/^endTime .*/endTime         $NITERS;/" "$DIR/system/controlDict"
+sed -i "s/^writeInterval .*/writeInterval   $NITERS;/" "$DIR/system/controlDict"
 sed -i '/libs.*nnTurbulenceModels/d' "$DIR/system/controlDict"
 sed -i '/libs.*fvOptions/d' "$DIR/system/controlDict"
 echo 'libs (libnnTurbulenceModels libfvOptions);' >> "$DIR/system/controlDict"
